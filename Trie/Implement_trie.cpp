@@ -1,62 +1,106 @@
 //     https://leetcode.com/problems/implement-trie-prefix-tree/description/
 // this is the besic implementation of trie ,,,,,,   ok Punit now you are boss in trie ...... don't leave any question of trie without solving it
 
+class TrieNode {
+public:
+    TrieNode* child[26];
+    bool isWord;
+    int wordCount;
+    int prefixCount;
+
+    TrieNode() {
+        isWord = false;
+        wordCount = 0;
+        prefixCount = 0;
+        for (int i = 0; i < 26; ++i) {
+            child[i] = nullptr;
+        }
+    }
+};
+
 class Trie {
 public:
-    struct TrieNode{
-        bool isEndOfWord;
-        TrieNode*children[26];
-    };
-    TrieNode* getNode(){
-        TrieNode* newNode=new TrieNode();
-        newNode->isEndOfWord=false;
-        for(int i=0;i<26; i++){
-            newNode->children[i]=NULL;
-        }
-        return newNode;
-    }
     TrieNode* root;
+
     Trie() {
-        root=getNode();
+        root = new TrieNode();
     }
-    
-    void insert(string word) {
-        TrieNode*crawler=root;
-        for(int i=0; i<word.size(); i++){
-            char ch=word[i];
-            int idx=ch-'a';
-            if(crawler->children[idx]==NULL){
-                crawler->children[idx]=getNode();
+
+    void insert(const string& word) {
+        TrieNode* node = root;
+        for (char ch : word) {
+            int idx = ch - 'a';
+            if (!node->child[idx]) {
+                node->child[idx] = new TrieNode();
             }
-            crawler=crawler->children[idx];
+            node = node->child[idx];
+            node->prefixCount++;
         }
-        crawler->isEndOfWord=true;
+        node->isWord = true;
+        node->wordCount++;
     }
-    
-    bool search(string word) {
-        TrieNode*crawler=root;
-        for(int i=0; i<word.size(); i++){
-            char ch=word[i];
-            int idx=ch-'a';
-            if(crawler->children[idx]==NULL){
+
+    bool search(const string& word) {
+        TrieNode* node = root;
+        for (char ch : word) {
+            int idx = ch - 'a';
+            if (!node->child[idx]) {
                 return false;
             }
-            crawler=crawler->children[idx];
+            node = node->child[idx];
         }
-        return (crawler->isEndOfWord==true);
+        return node->isWord;
     }
-    
-    bool startsWith(string prefix) {
-        TrieNode*crawler=root;
-        int i=0;
-        for(i=0; i<prefix.size(); i++){
-            char ch=prefix[i];
-            int idx=ch-'a';
-            if(crawler->children[idx]==NULL){
+
+    bool startsWith(const string& prefix) {
+        TrieNode* node = root;
+        for (char ch : prefix) {
+            int idx = ch - 'a';
+            if (!node->child[idx]) {
                 return false;
             }
-            crawler=crawler->children[idx];
+            node = node->child[idx];
         }
-        return (i==prefix.size());
+        return true;
+    }
+
+    int countWordsEqualTo(const string& word) {
+        TrieNode* node = root;
+        for (char ch : word) {
+            int idx = ch - 'a';
+            if (!node->child[idx]) {
+                return 0;
+            }
+            node = node->child[idx];
+        }
+        return node->wordCount;
+    }
+
+    int countWordsStartingWith(const string& prefix) {
+        TrieNode* node = root;
+        for (char ch : prefix) {
+            int idx = ch - 'a';
+            if (!node->child[idx]) {
+                return 0;
+            }
+            node = node->child[idx];
+        }
+        return node->prefixCount;
+    }
+
+    void erase(const string& word) {
+        if (!search(word)) {
+            return;
+        }
+        TrieNode* node = root;
+        for (char ch : word) {
+            int idx = ch - 'a';
+            node = node->child[idx];
+            node->prefixCount--;
+        }
+        node->wordCount--;
+        if (node->wordCount == 0) {
+            node->isWord = false;
+        }
     }
 };
