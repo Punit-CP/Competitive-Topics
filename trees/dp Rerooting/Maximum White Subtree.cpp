@@ -1,6 +1,93 @@
 // https://codeforces.com/problemset/problem/1324/F
 
+
+
 // Method-1
+#include <bits/stdc++.h>
+using namespace std;
+
+#define int long long
+
+void solve()
+{
+    int n;
+    cin >> n;
+    vector<int> color(n + 1); // 1 for white, 0 for black
+    for (int i = 1; i <= n; i++)
+    {
+        cin >> color[i];
+    }
+
+    vector<vector<int>> adj(n + 1);
+    for (int i = 1; i < n; i++)
+    {
+        int u, v;
+        cin >> u >> v;
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
+
+    vector<int> dp(n + 1), res(n + 1);
+
+    function<void(int, int)> dfs = [&](int u, int p)
+    {
+        dp[u] = (color[u] == 1 ? 1 : -1);
+        for (int v : adj[u])
+        {
+            if (v == p) continue;
+            dfs(v, u);
+            dp[u] += max(0LL, dp[v]);
+        }
+    };
+
+    function<void(int, int)> reroot = [&](int u, int p)
+    {
+        res[u] = dp[u];
+        for (int v : adj[u])
+        {
+            if (v == p) continue;
+
+            int orig_u = dp[u];
+            int orig_v = dp[v];
+
+            // Reroot: remove v's contribution from u, add u's to v
+            dp[u] -= max(0LL, dp[v]);
+            dp[v] += max(0LL, dp[u]);
+
+            reroot(v, u);
+
+            // Restore
+            dp[u] = orig_u;
+            dp[v] = orig_v;
+        }
+    };
+
+    dfs(1, 0);
+    reroot(1, 0);
+
+    for (int i = 1; i <= n; i++)
+        cout << res[i] << " ";
+    cout << "\n";
+}
+
+int32_t main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(nullptr);
+    cout.tie(nullptr);
+
+    int t = 1;
+    // cin >> t;
+    while (t--)
+        solve();
+
+    return 0;
+}
+
+
+
+
+// Method-2
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -100,86 +187,16 @@ int32_t main()
 
 
 
+// | Aspect                           | **First Version (Correct, `dp[u]` is mutable)**                                | **Second Version (Functional rerooting)**                                            |
+// | -------------------------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
+// | **Rerooting function signature** | `void reroot(int u, int p)`                                                    | `void reroot(int u, int p, int ans)`                                                 |
+// | **Technique**                    | Temporarily modifies `dp[u]` and `dp[v]` during traversal, then restores them. | Uses `ans` to carry final answer as it reroots; doesn't change `dp[]` during reroot. |
+// | **State management**             | Destructive (modifies state, saves and restores it)                            | Pure functional (no mutation of state)                                               |
+// | **Clarity**                      | Easier to implement and debug locally                                          | Slightly more elegant and "functional", but harder to reason about                   |
+// | **Final output**                 | Uses `res[u] = dp[u]` after modifying `dp`                                     | Uses `res[u] = ans` passed from above                                                |
 
-// Method-2
-#include <bits/stdc++.h>
-using namespace std;
 
-#define int long long
 
-void solve()
-{
-    int n;
-    cin >> n;
-    vector<int> color(n + 1); // 1 for white, 0 for black
-    for (int i = 1; i <= n; i++)
-    {
-        cin >> color[i];
-    }
 
-    vector<vector<int>> adj(n + 1);
-    for (int i = 1; i < n; i++)
-    {
-        int u, v;
-        cin >> u >> v;
-        adj[u].push_back(v);
-        adj[v].push_back(u);
-    }
 
-    vector<int> dp(n + 1), res(n + 1);
-
-    function<void(int, int)> dfs = [&](int u, int p)
-    {
-        dp[u] = (color[u] == 1 ? 1 : -1);
-        for (int v : adj[u])
-        {
-            if (v == p) continue;
-            dfs(v, u);
-            dp[u] += max(0LL, dp[v]);
-        }
-    };
-
-    function<void(int, int)> reroot = [&](int u, int p)
-    {
-        res[u] = dp[u];
-        for (int v : adj[u])
-        {
-            if (v == p) continue;
-
-            int orig_u = dp[u];
-            int orig_v = dp[v];
-
-            // Reroot: remove v's contribution from u, add u's to v
-            dp[u] -= max(0LL, dp[v]);
-            dp[v] += max(0LL, dp[u]);
-
-            reroot(v, u);
-
-            // Restore
-            dp[u] = orig_u;
-            dp[v] = orig_v;
-        }
-    };
-
-    dfs(1, 0);
-    reroot(1, 0);
-
-    for (int i = 1; i <= n; i++)
-        cout << res[i] << " ";
-    cout << "\n";
-}
-
-int32_t main()
-{
-    ios_base::sync_with_stdio(false);
-    cin.tie(nullptr);
-    cout.tie(nullptr);
-
-    int t = 1;
-    // cin >> t;
-    while (t--)
-        solve();
-
-    return 0;
-}
 
