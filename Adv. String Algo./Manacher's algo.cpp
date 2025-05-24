@@ -7,6 +7,7 @@
 // | Longest palindromic prefix/suffix   | ✅ Efficient      |
 // | Substring-based palindrome problems | ✅ Fast checking  |
 
+// Y-Tube video link:  https://www.youtube.com/watch?v=ei7qghJEj4Y&ab_channel=VivekGupta
 
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
