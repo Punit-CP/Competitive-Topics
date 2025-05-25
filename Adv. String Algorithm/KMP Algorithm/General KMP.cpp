@@ -39,7 +39,6 @@ vector<int> buildLPS(const string &pat) {
         } else {
             if (len != 0) {
                 len = lps[len - 1];
-                // len--;
             } else {
                 lps[i++] = 0;
                 //i++;
