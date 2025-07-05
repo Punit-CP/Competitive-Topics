@@ -48,3 +48,23 @@ void initSieve()
 }
 
 initSieve(); // call this in main function
+
+
+// or
+vector<int> spf;
+void sieve(int n)
+{
+    spf.assign(n + 1, 0);
+    for (int i = 2; i <= n; ++i)
+    {
+        if (spf[i] == 0)
+        {
+            for (int j = i; j <= n; j += i)
+            {
+                if (spf[j] == 0)
+                    spf[j] = i;
+            }
+        }
+    }
+}
+sieve(1e5 + 1);
