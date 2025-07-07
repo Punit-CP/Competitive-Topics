@@ -171,3 +171,24 @@ int32_t main() {
     }
     return 0;
 }
+
+
+// ❌ Don’t Use Mo’s Algorithm When:
+// | Condition                                   | Reason                             |
+// | ------------------------------------------- | ---------------------------------- |
+// | Queries depend on dynamic updates           | Mo's is for static arrays only     |
+// | You need answers in the same order as input | Mo's reorders queries offline      |
+// | Problem asks for "first/last occurrence"    | Hard to maintain with add/remove   |
+// | Problem uses prefix/suffix structure        | Better to use prefix/suffix arrays |
+
+// 🧠 Intuition Rule:
+// ❝ If the problem is “answer many range queries on a static array”, and you can maintain the result with add/remove logic, then Mo’s Algorithm is a great fit. ❞
+
+// ✅ Classic Problems Where Mo’s Works:
+// | Condition                                       | Answer |
+// | ----------------------------------------------- | ------ |
+// | Are all queries on a **static array**?          | ✅ Yes  |
+// | Are all queries given **beforehand**?           | ✅ Yes  |
+// | Can you maintain the answer using `add/remove`? | ✅ Yes  |
+// | Are you asked to **answer many queries**?       | ✅ Yes  |
+// → If all are Yes, use Mo's Algorithm.
