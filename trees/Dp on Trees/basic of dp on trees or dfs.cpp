@@ -11,6 +11,7 @@
             // This is the area where you know about the child data and you calculate dp[u] using dp[child[u]], dp[child[child[u]]]....etc;
             dp[u]= somthing +  dp[child[u]], dp[child[child[u]]]....etc;
         }
+        // Here we know about about the complete subtree of Node u 
     };
 
  
